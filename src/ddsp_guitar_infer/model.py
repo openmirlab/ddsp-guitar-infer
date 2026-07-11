@@ -1,4 +1,14 @@
-"""PyTorch module that mirrors the DDSP guitar control network."""
+"""model.py — control network + DDSP synthesis wrapper (★ load-bearing).
+
+Inference-only replica of the Lightning module used at training time:
+embeds string index and discrete/continuous MIDI features, runs a stack
+of self-attention+RNN blocks (SARNNBlock), decodes harmonic/noise/f0
+parameters, and drives ddsp_guitar_utils.synthesis_model.DDSPModel to
+render audio from those parameters.
+
+Reads: ddsp_guitar_utils.synthesis_model.DDSPModel ·
+ddsp_guitar_utils.control_blocks.SARNNBlock · ddsp_guitar_utils.dsp.Quantizer
+"""
 
 from __future__ import annotations
 

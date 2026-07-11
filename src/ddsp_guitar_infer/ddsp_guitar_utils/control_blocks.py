@@ -1,4 +1,12 @@
-"""Control-network blocks used by the guitar inference model."""
+"""control_blocks.py — control-network transformer block (★ load-bearing).
+
+SARNNBlock combines per-timestep multi-head self-attention across
+strings with a bidirectional RNN (LSTM/GRU/RNN) over time, both
+residual, forming the repeated building block of GuitarControlModel's
+main_block stack.
+
+Reads: einops · torch.nn
+"""
 
 from __future__ import annotations
 

@@ -52,7 +52,28 @@ pip install .
 
 - **Python**: 3.10+
 - **Core**: torch, torchaudio, numpy, scipy, soundfile, pretty_midi
-- **Checkpoint**: Auto-downloaded from Hugging Face on first run
+- **Checkpoint**: Auto-downloaded from Hugging Face on first run (~360 MB,
+  cached by `huggingface_hub`). To skip the download (e.g. in CI or
+  offline), set `DDSP_GUITAR_WEIGHTS=/path/to/unified.ckpt` or pass
+  `--checkpoint`/`checkpoint=` explicitly.
+
+### Weights provenance
+
+The pretrained checkpoint (`erl-j/ddsp-guitar-unified` on Hugging Face) is
+hosted under a **third-party personal account**, not an openmirlab repo.
+Its Hugging Face license field is currently **unspecified ("unknown")**
+and it has no model card. This package's own code is Apache-2.0 (see
+[LICENSE](LICENSE)), but that does not extend to the weights themselves --
+treat redistribution of the checkpoint as unresolved until upstream
+licensing is clarified or the checkpoint is mirrored under an
+openmirlab-controlled repo with explicit terms.
+
+### Determinism
+
+Synthesis uses a filtered-noise DDSP component seeded from PyTorch's
+global RNG on every render, so **two renders of the same MIDI are not
+identical by default**. For reproducible output, call
+`torch.manual_seed(seed)` immediately before `render_midi(...)`.
 
 ## Usage
 

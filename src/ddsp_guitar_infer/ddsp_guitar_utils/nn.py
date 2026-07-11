@@ -1,3 +1,14 @@
+"""nn.py — WaveNet-style conv stack + RNN building blocks (★ load-bearing).
+
+DilatedConvStackStack wraps glotnet_wavenet's ConvolutionStack with
+optional self-attention conditioning; FcStack/Fc are simple normalized
+MLP layers; RNN wraps GRU/LSTM/RNN with bidirectional output summing.
+Used by the alternate MixFcDecoder path in synthesis_model.py, not the
+active GuitarControlModel path.
+
+Reads: .glotnet_wavenet.convolution_stack.ConvolutionStack
+"""
+
 import torch
 import numpy as np
 import einops

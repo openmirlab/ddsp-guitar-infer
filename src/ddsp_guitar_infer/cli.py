@@ -1,4 +1,11 @@
-"""Command-line interface for ddsp-guitar inference."""
+"""cli.py — command-line entry point (★ load-bearing).
+
+argparse wrapper around api.load_synth/render_midi; exposes device,
+checkpoint override, crop/legato/pitch-correction and chunked-rendering
+flags. Wired as the `ddsp-guitar-infer` console script in pyproject.toml.
+
+Reads: api.load_synth
+"""
 
 from __future__ import annotations
 

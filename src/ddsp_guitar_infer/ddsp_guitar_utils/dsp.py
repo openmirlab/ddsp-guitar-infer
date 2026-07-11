@@ -1,4 +1,12 @@
-"""Core DSP helpers used by the DDSP guitar inference stack."""
+"""dsp.py — shared DSP math helpers (★ load-bearing).
+
+Unit conversions (dB / MIDI / Hz <-> normalized units), the fold/unfold
+helpers that flatten the per-string channel dimension into batch for
+synth ops, dtype conversion, feature resampling, and the Quantizer used
+for the model's classification-style outputs.
+
+Reads: einops · numpy
+"""
 
 from __future__ import annotations
 

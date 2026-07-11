@@ -1,4 +1,13 @@
-"""MIDI conditioning helpers for ddsp-guitar inference."""
+"""midi.py — MIDI-to-model conditioning (★ load-bearing).
+
+Converts a pretty_midi.PrettyMIDI performance into per-string (6-voice)
+pitch/velocity frame grids at the model's frame rate, with string
+assignment by pitch range (STRING_TO_PITCH), note extension/cropping,
+and linear-interpolation cross-fade blending of overlapping inference
+windows.
+
+Reads: pretty_midi
+"""
 
 from __future__ import annotations
 

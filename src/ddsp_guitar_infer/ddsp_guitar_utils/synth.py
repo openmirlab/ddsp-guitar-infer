@@ -1,3 +1,15 @@
+"""synth.py — low-level DSP synthesizers (★ load-bearing).
+
+Harmonic (additive sinusoidal) and filtered-noise synthesis primitives
+plus reverb (single- and multi-channel, via a learned impulse response
+convolved over the dry mix). Note: FilteredNoiseSynth.forward and the
+Reverb/MultiChannelReverb parameter init draw from torch.rand — audio
+synthesis is only reproducible across runs if the caller seeds torch's
+global RNG (torch.manual_seed) beforehand.
+
+Reads: julius · .dsp.resample_feature
+"""
+
 import torch
 import einops
 import numpy as np

@@ -1,4 +1,14 @@
-"""High-level inference API for ddsp-guitar."""
+"""api.py — high-level inference entry point (★ load-bearing).
+
+Wraps GuitarControlModel with device/dtype setup, MIDI-to-audio rendering
+in overlapping windows (skip_ratio) with cross-fade blending, and chunked
+waveform rendering to bound memory. Resolves the checkpoint via
+resolve_checkpoint (local path, DDSP_GUITAR_WEIGHTS env var, or a
+Hugging Face download).
+
+Reads: model.GuitarControlModel · utils.midi · utils.checkpoints.resolve_checkpoint ·
+utils.preprocessing.preprocess_model_inputs · ddsp_guitar_utils.dsp.convert_dtype
+"""
 
 from __future__ import annotations
 

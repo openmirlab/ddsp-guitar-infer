@@ -1,3 +1,13 @@
+"""preprocessing.py — model input feature scaling (★ load-bearing).
+
+Converts raw MIDI/hex features (pitch in Hz or MIDI units, loudness in
+dB, string index) into the normalized tensors the control network
+expects, merging them back into the original inputs dict without
+dropping unrecognized keys.
+
+Reads: ddsp_guitar_utils.dsp (scale_db, hz_to_unit, midi_to_unit, hz_to_midi)
+"""
+
 import torch
 
 from ddsp_guitar_infer.ddsp_guitar_utils.dsp import (

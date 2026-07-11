@@ -1,3 +1,17 @@
+"""synthesis_model.py — DDSP harmonic+noise synth core (★ load-bearing).
+
+DDSPModel turns per-string control parameters (f0, harmonic amplitudes,
+noise band amplitudes) into audio via additive harmonic synthesis +
+filtered noise synthesis + per-voice reverb, folding/unfolding the
+string dimension into the batch dimension around the underlying synth
+ops. Also carries now-unused decoder variants (DDSPDecoderAdapter,
+MixFcDecoder) kept for reference/experimentation, not on the active
+GuitarControlModel path.
+
+Reads: .nn (RNN, DilatedConvStackStack, FcStack) · .synth ·
+.dsp (fold, hz_to_unit, unfold, unit_to_hz)
+"""
+
 import einops
 import numpy as np
 import torch
