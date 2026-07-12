@@ -9,6 +9,13 @@ string (voice) at a time, using a control RNN + additive harmonic synthesis
 + filtered noise synthesis + reverb. See README.md for the public API and
 CLI.
 
+**Status**: Apache-2.0, PyPI-publishable code (see `.github/workflows/publish.yml`)
+— but the pretrained checkpoint it downloads has an unresolved,
+third-party ("unknown") license (see Weights provenance below), so
+redistribution/commercial use of the *weights* specifically is not cleared.
+Weights are externalized to a Hugging-Face-backed download-on-demand cache,
+never bundled or git-tracked (org constitution article 4).
+
 ## Weights provenance (load-bearing -- read before touching checkpoints.py or LICENSE)
 
 The pretrained checkpoint is downloaded from **`erl-j/ddsp-guitar-unified`**
@@ -73,7 +80,7 @@ assuming it.
 - `ddsp_guitar_utils/nn.py` + `ddsp_guitar_utils/glotnet_wavenet/` --
   WaveNet-style conv stack used only by the unused `MixFcDecoder` path.
 
-## Testing
+## Testing philosophy
 
 - `tests/test_cli.py`, `tests/test_midi_utils.py` -- fast unit tests, no
   checkpoint needed, run in every CI job.
@@ -81,7 +88,18 @@ assuming it.
   synthesis). Skips via `skipif` unless `DDSP_GUITAR_RUN_E2E=1` is set
   (CI leaves it unset, so these report skipped, not failed -- see
   `.github/workflows/test.yml`). Set `DDSP_GUITAR_WEIGHTS=/path/to/unified.ckpt`
-  alongside it to avoid a live Hugging Face download.
+  alongside it to avoid a live Hugging Face download. This is also the test
+  that directly verifies the Determinism contract above (same-seed match,
+  different-seed mismatch) rather than assuming it.
+
+## Verification / test commands
+
+```bash
+uv sync --extra dev
+uv run pytest -q                    # fast tests only (default CI job)
+DDSP_GUITAR_RUN_E2E=1 uv run pytest -q   # + real-checkpoint e2e regression
+uv run ruff check .
+```
 
 ## File-top header convention
 
