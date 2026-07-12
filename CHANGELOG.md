@@ -8,6 +8,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `.github/workflows/test.yml`: CI matrix extended from `["3.10", "3.12"]` to
+  `["3.10", "3.11", "3.12", "3.13"]` -- all four verified green locally before
+  landing (`requires-python = ">=3.10"` already made no over-claim, so this
+  closes an under-tested gap rather than raising the floor).
+- `.github/workflows/test.yml`: new `build-smoke-test` job (org constitution
+  art.7) -- `uv build` produces a wheel *from the sdist* (not the working
+  tree), installs it into a clean venv, and imports `GuitarSynthesizer` /
+  `load_synth` plus a CLI `--help` smoke test. Catches the empty-wheel class
+  of packaging bug that `hatch build` alone can miss.
+
+### Changed
+- `pyproject.toml` dependency floors bumped after per-version local
+  verification (Python 3.10/3.11/3.12/3.13, `pytest -q`: 3 passed / 3 skipped
+  on every version):
+  - `numpy`: `>=1.24,<3.0` -> `>=2.2.0` (no ceiling). NumPy 3.0 has not been
+    released (latest is 2.5.x) and the old `<3.0` ceiling carried no written
+    justification or tracking issue, so per art.3 ("floors, not ceilings") it
+    is removed rather than kept as unexamined caution. The floor is bumped to
+    `2.2.0`, not the newest `2.5.x` line, because `numpy>=2.3.0` requires
+    Python >= 3.11 and this repo's CI matrix keeps Python 3.10 -- `2.2.x` is
+    the newest line that still supports 3.10. (`uv`'s resolver picks `2.2.6`
+    on 3.10 and `2.3.5`+ on 3.11+ from this same unbounded floor.)
+  - `torch`: `>=2.4.0` -> `>=2.13.0`; `torchaudio`: `>=2.4.0` -> `>=2.11.0`.
+    Both verified to support Python 3.10-3.13.
+  - `huggingface_hub`: `>=0.24.0` -> `>=1.0.0`. huggingface_hub 1.0 (released
+    2025-10-27) removes several long-deprecated parameters, including
+    `hf_hub_download(local_dir_use_symlinks=...)`, which this package passed
+    explicitly -- see the `checkpoints.py` fix below. `local_dir_use_symlinks`
+    has been a documented "deprecated arg" (no functional effect once
+    `local_dir` is set) since at least 0.24, so dropping it is a pure
+    behavior-preserving cleanup on every version from 0.24 through 1.23, not
+    a compromise made to reach 1.x.
+- `src/ddsp_guitar_infer/utils/checkpoints.py`: dropped the
+  `local_dir_use_symlinks=False` argument from the `hf_hub_download` call --
+  required for `huggingface_hub>=1.0` (the parameter no longer exists there)
+  and a no-op on the older versions this package still supports.
 - Standalone git identity: the project previously sat untracked inside an
   unrelated monorepo. First commit captures the clean source tree only
   (`.venv/`, `.pytest_cache/`, `__pycache__/`, build artifacts excluded).

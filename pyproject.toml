@@ -10,14 +10,21 @@ requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 dependencies = [
-    "torch>=2.4.0",
-    "torchaudio>=2.4.0",
+    "torch>=2.13.0",
+    "torchaudio>=2.11.0",
     "einops>=0.8.0",
     "pretty_midi>=0.2.10",
     "soundfile>=0.12.1",
     "tqdm>=4.67.1",
-    "huggingface_hub>=0.24.0",
-    "numpy>=1.24,<3.0",
+    "huggingface_hub>=1.0.0",
+    # Floor only, no ceiling (org constitution art.3: floors, not ceilings).
+    # 2.2.x is the newest numpy line that still supports Python 3.10 (2.3.0+
+    # requires py>=3.11) -- this repo's CI matrix keeps 3.10 as its floor, so
+    # the numpy floor is capped here rather than on the latest release.
+    # numpy 3.0 does not exist yet as of this writing (latest is 2.5.x); a
+    # previous "<3.0" ceiling was speculative with no tracked justification
+    # and has been removed per art.3.
+    "numpy>=2.2.0",
     "julius>=0.2.7",
 ]
 
