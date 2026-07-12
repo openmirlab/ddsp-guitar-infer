@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
@@ -36,3 +36,42 @@ jobs:
 
       - name: Run tests
         run: uv run --python ${{ matrix.python-version }} pytest -q
+
+  build-smoke-test:
+    # Wheel-from-sdist install smoke test (org constitution art.7): `uv build`
+    # builds the wheel FROM the sdist (not straight from the working tree), so
+    # this catches sdist-packaging bugs (e.g. a hatch `packages` config that
+    # flattens the sdist and leaves the wheel target empty) that `hatch build`
+    # alone would miss. Installs into a clean venv and touches public symbols.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install '3.12'
+
+      - name: Build sdist and wheel-from-sdist
+        run: uv build
+
+      - name: Install wheel into a clean venv
+        run: |
+          uv venv --python 3.12 /tmp/smoke-venv
+          uv pip install --python /tmp/smoke-venv/bin/python dist/*.whl
+
+      - name: Import package and touch public symbols
+        run: |
+          /tmp/smoke-venv/bin/python -c "
+          import ddsp_guitar_infer
+          from ddsp_guitar_infer import GuitarSynthesizer, load_synth
+          assert ddsp_guitar_infer.__version__
+          assert GuitarSynthesizer and load_synth
+          print('OK:', ddsp_guitar_infer.__version__)
+          "
+
+      - name: CLI entry point smoke test
+        run: /tmp/smoke-venv/bin/ddsp-guitar-infer --help

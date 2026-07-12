@@ -45,7 +45,6 @@ def resolve_checkpoint(path: Optional[str] = None, cache_dir: Optional[str] = No
         repo_id=DEFAULT_REPO,
         filename=DEFAULT_FILENAME,
         local_dir=cache_dir,
-        local_dir_use_symlinks=False,
     )
     return Path(download_path)
 
