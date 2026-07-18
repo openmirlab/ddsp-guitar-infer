@@ -24,7 +24,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=str, help="Output WAV path (defaults to <midi>.wav)")
     parser.add_argument("--checkpoint", type=str, help="Path to a .ckpt file (defaults to HF download)")
     parser.add_argument("--cache-dir", type=str, help="Optional cache directory for downloads")
-    parser.add_argument("--device", type=str, help="Device string such as cuda:0 or cpu")
+    parser.add_argument(
+        "--device", type=str, help='Device string such as cuda:0, cpu, or "auto" (default: auto-detect)'
+    )
     parser.add_argument("--crop-seconds", type=int, help="Trim MIDI to the first N seconds before rendering")
     parser.add_argument("--skip-ratio", type=float, default=0.5, help="Window overlap ratio (0-1)")
     parser.add_argument("--legato", action="store_true", help="Keep overlapping notes on each string")

@@ -27,6 +27,13 @@ from ddsp_guitar_infer.utils.preprocessing import preprocess_model_inputs
 from ddsp_guitar_infer.ddsp_guitar_utils.dsp import convert_dtype
 
 
+def _resolve_device(device: Optional[str]) -> torch.device:
+    """Resolve a device string, treating None and "auto" as auto-detect."""
+    if device in (None, "auto"):
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return torch.device(device)
+
+
 @dataclass
 class GuitarSynthesizer:
     """Wrapper that loads the DDSP control model and renders MIDI to audio."""
@@ -51,7 +58,7 @@ class GuitarSynthesizer:
         model = GuitarControlModel(config)
         model.load_state_dict(raw["state_dict"], strict=True)
 
-        dev = torch.device(device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu"))
+        dev = _resolve_device(device)
         model.to(dev)
         model.eval()
 
