@@ -55,6 +55,9 @@ assuming it.
 
 - `api.py` -- `GuitarSynthesizer`: checkpoint loading, device/dtype setup,
   windowed inference with cross-fade blending, chunked audio rendering.
+  `GuitarSynthSession` adds an explicit load/release/close lifecycle around
+  the legacy `load_synth` API; its `cache_info()` uses local-only resolution
+  and must never initiate a checkpoint download.
 - `cli.py` -- argparse CLI wrapping `api.load_synth` / `render_midi`.
 - `model.py` -- `GuitarControlModel`: the control network (string/feature
   embeddings -> `SARNNBlock` stack -> classification+regression heads) plus

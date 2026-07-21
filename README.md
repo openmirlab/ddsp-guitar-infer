@@ -133,6 +133,21 @@ audio = synth.render_midi("song.mid")
 synth.save_wav(audio, "song.wav")
 ```
 
+For an explicit model lifecycle, use `GuitarSynthSession`.  `load()` is
+idempotent; `release()` frees the resident model but retains downloaded
+weights; and `close()` is terminal. `infer()` and `render_midi()` require a
+loaded session.
+
+```python
+from ddsp_guitar_infer import GuitarSynthSession
+
+with GuitarSynthSession(device="cuda:1") as session:
+    audio = session.render_midi("song.mid")
+
+# This only inspects the same configured checkpoint location; it never downloads.
+cache = GuitarSynthSession(cache_dir="weights").cache_info()
+```
+
 ## What this project will NEVER bundle
 
 The pretrained checkpoint (~360 MB) is **never bundled in the package and

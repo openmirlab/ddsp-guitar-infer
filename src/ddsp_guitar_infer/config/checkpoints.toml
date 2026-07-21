@@ -1,0 +1,9 @@
+# Package-owned runtime checkpoint record. No upstream SHA-256 is published.
+[default]
+repo = "erl-j/ddsp-guitar-unified"
+filename = "unified.ckpt"
+revision = "main"
+sha256 = ""
+integrity = "unavailable"
+provenance = "Hugging Face erl-j/ddsp-guitar-unified"
+updated_at = "2026-07-21"

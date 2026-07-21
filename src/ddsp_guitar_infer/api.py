@@ -31,6 +31,17 @@ def _resolve_device(device: Optional[str]) -> torch.device:
     """Resolve a device string, treating None and "auto" as auto-detect."""
     if device in (None, "auto"):
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if device == "cpu":
+        return torch.device("cpu")
+    if not isinstance(device, str) or not device.startswith("cuda"):
+        raise ValueError("device must be None, 'auto', 'cpu', 'cuda', or 'cuda:N'")
+    suffix = device[4:]
+    if suffix and (not suffix.startswith(":") or not suffix[1:].isdigit()):
+        raise ValueError("device must be None, 'auto', 'cpu', 'cuda', or 'cuda:N'")
+    if not torch.cuda.is_available():
+        raise RuntimeError(f"CUDA was explicitly requested ({device}) but is unavailable")
+    if suffix and int(suffix[1:]) >= torch.cuda.device_count():
+        raise RuntimeError(f"CUDA device index {suffix[1:]} is unavailable")
     return torch.device(device)
 
 
@@ -199,4 +210,88 @@ def load_synth(
     return GuitarSynthesizer.from_checkpoint(checkpoint, device, cache_dir)
 
 
-__all__ = ["GuitarSynthesizer", "load_synth"]
+class GuitarSynthSession:
+    """Reusable lifecycle wrapper around :func:`load_synth`.
+
+    A session separates construction from checkpoint/model loading.  It can
+    release resident model memory and load again, while ``close()`` makes the
+    session terminal.  Checkpoint files are never removed by this class.
+    """
+
+    def __init__(
+        self,
+        checkpoint: Optional[str] = None,
+        device: Optional[str] = None,
+        cache_dir: Optional[str] = None,
+    ) -> None:
+        self.checkpoint = checkpoint
+        self.device = device
+        self.cache_dir = cache_dir
+        self._synth: Optional[GuitarSynthesizer] = None
+        self._closed = False
+        self._released = False
+
+    @property
+    def status(self) -> str:
+        """Return ``unloaded``, ``ready``, ``released``, or ``closed``."""
+        if self._closed:
+            return "closed"
+        if self._synth is not None:
+            return "ready"
+        return "released" if self._released else "unloaded"
+
+    def load(self) -> "GuitarSynthSession":
+        """Load the synthesizer once and return this ready session."""
+        if self._closed:
+            raise RuntimeError("GuitarSynthSession is closed")
+        if self._synth is None:
+            self._synth = load_synth(self.checkpoint, self.device, self.cache_dir)
+            self._released = False
+        return self
+
+    def _ready_synth(self) -> GuitarSynthesizer:
+        if self._closed:
+            raise RuntimeError("GuitarSynthSession is closed")
+        if self._synth is None:
+            raise RuntimeError("GuitarSynthSession is not loaded; call load() first")
+        return self._synth
+
+    def infer(self, *args, **kwargs) -> torch.Tensor:
+        """Render MIDI through the loaded synthesizer."""
+        return self._ready_synth().render_midi(*args, **kwargs)
+
+    def render_midi(self, *args, **kwargs) -> torch.Tensor:
+        """Render MIDI through the loaded synthesizer."""
+        return self._ready_synth().render_midi(*args, **kwargs)
+
+    def release(self) -> None:
+        """Drop the resident synthesizer without deleting checkpoint files."""
+        if self._closed:
+            return
+        self._synth = None
+        self._released = True
+
+    def close(self) -> None:
+        """Terminally release the synthesizer. Safe to call repeatedly."""
+        if not self._closed:
+            self.release()
+            self._closed = True
+
+    def cache_info(self) -> dict[str, object]:
+        """Describe the configured checkpoint cache without downloading it."""
+        try:
+            resolved = resolve_checkpoint(
+                self.checkpoint, self.cache_dir, allow_download=False
+            )
+        except Exception as error:  # cache misses differ across hub versions
+            return {"checkpoint": None, "cached": False, "error": str(error)}
+        return {"checkpoint": resolved, "cached": True, "error": None}
+
+    def __enter__(self) -> "GuitarSynthSession":
+        return self.load()
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()
+
+
+__all__ = ["GuitarSynthesizer", "GuitarSynthSession", "load_synth"]

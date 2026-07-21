@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `GuitarSynthSession`: an additive lifecycle API around `load_synth`, with
+  idempotent loading, explicit release/terminal close, context-manager use,
+  ready-only MIDI rendering, and download-free checkpoint cache inspection.
 - `.github/workflows/test.yml`: CI matrix extended from `["3.10", "3.12"]` to
   `["3.10", "3.11", "3.12", "3.13"]` -- all four verified green locally before
   landing (`requires-python = ">=3.10"` already made no over-claim, so this
