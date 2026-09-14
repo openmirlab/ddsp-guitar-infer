@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **`test_render_regression_fixture` torch-version drift**: this test's
+  golden was an exact sha256 digest recorded on torch 2.9.1; it failed
+  unconditionally on torch 2.13.0 (this repo's own floor and phonon's
+  pinned torch). Measured the actual drift by rendering the identical
+  sha256-pinned checkpoint/seed/MIDI under both a torch-2.9.1+cpu venv and
+  this repo's torch-2.13.0+cu130 venv: max abs diff
+  `6.045447662472725e-06` (float32; signal peak ~0.0786, so ~7.7e-5
+  relative), mean abs diff `4.98e-08`, no structural divergence (no sign
+  flips, no order-of-magnitude jumps -- 31,570/206,399 samples were
+  bit-identical, the rest differed only at this tiny scale). This is
+  float-level build drift, not a regression, so the test now compares
+  against a stored float array (`tests/fixtures/render_seed1234_torch291.npy`)
+  with `atol=2.5e-05` (~4.1x the measured drift, matching this org's
+  "~4x observed" margin convention) instead of an exact digest. The
+  determinism tests (same-seed match / different-seed mismatch) are
+  unaffected -- they compare within one process/torch build and stay
+  digest-exact.
 - **Checkpoint integrity**: `config/checkpoints.toml` previously shipped
   `sha256 = ""` / `integrity = "unavailable"` with no documented reason --
   contradicting the org constitution's article-4 requirement that a missing-
