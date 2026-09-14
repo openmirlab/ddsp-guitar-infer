@@ -34,6 +34,18 @@ def test_checkpoint_config_has_pinned_sha256_and_revision():
     bytes.fromhex(config["revision"])
 
 
+def test_checkpoint_config_license_is_a_verified_assertion_not_a_bare_unknown():
+    """`license` must be a checked SPDX id or the explicit NOASSERTION marker --
+
+    never the bare, undocumented "unknown" this record used to carry (org
+    constitution article 4/8: never claim a stronger license than upstream
+    states, and record a verified NOASSERTION rather than silence).
+    """
+    config = checkpoints.checkpoint_config()
+    assert config["license"] in {"NOASSERTION"} or "-" in config["license"]  # e.g. "Apache-2.0"
+    assert config["license"] != "unknown"
+
+
 def test_verification_raises_on_sha256_mismatch(monkeypatch, tmp_path):
     corrupted = tmp_path / "unified.ckpt"
     corrupted.write_bytes(b"not the real checkpoint bytes")

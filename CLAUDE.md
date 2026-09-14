@@ -10,20 +10,18 @@ string (voice) at a time, using a control RNN + additive harmonic synthesis
 CLI.
 
 **Status**: Apache-2.0, PyPI-publishable code (see `.github/workflows/publish.yml`)
-— but the pretrained checkpoint it downloads has an unresolved,
-third-party ("unknown") license (see Weights provenance below), so
-redistribution/commercial use of the *weights* specifically is not cleared.
-Weights are externalized to a Hugging-Face-backed download-on-demand cache,
-never bundled or git-tracked (org constitution article 4).
+— but the pretrained checkpoint it downloads carries **`NOASSERTION`**
+(verified, not merely "unknown" by omission -- see Weights license below),
+so redistribution/commercial use of the *weights* specifically is not
+cleared. Weights are externalized to a Hugging-Face-backed
+download-on-demand cache, never bundled or git-tracked (org constitution
+article 4).
 
 ## Weights provenance (load-bearing -- read before touching checkpoints.py or LICENSE)
 
 The pretrained checkpoint is downloaded from **`erl-j/ddsp-guitar-unified`**
 on Hugging Face Hub (`unified.ckpt`, ~360 MB) -- a **personal, third-party
-account**, not an openmirlab-controlled repo. As of this writing the HF
-repo's own license field reports **"unknown"** and its README/model card is
-empty: there is no explicit license grant for the weights themselves beyond
-public availability on the Hub.
+account**, not an openmirlab-controlled repo.
 
 This package's own source code is Apache-2.0 (see LICENSE) and is an
 original reimplementation, not copied from any DDSP reference
@@ -34,12 +32,59 @@ checkpoint is safe to redistribute, fine-tune commercially, or bundle
 without checking with the upstream author first.
 
 Follow-up before wider distribution of the weights: either (a) get
-explicit licensing terms from `erl-j`, or (b) mirror the checkpoint under
-an openmirlab-controlled HF repo with an explicit license attached, and
+explicit licensing terms from `erl-j` (Nicolas Jonason, per the arXiv
+listing below), or (b) mirror the checkpoint under an
+openmirlab-controlled HF repo with an explicit license attached, and
 point `DEFAULT_REPO` in `utils/checkpoints.py` at that mirror. This is
 still open (tracked org-wide in `openmirlab-dev/weights.md`'s "queued"
-row for this package) -- pinning the sha256 below does not resolve the
-personal-account hosting risk, only the integrity gap.
+row for this package) -- neither the sha256 pin nor the license
+verification below resolves the personal-account hosting risk.
+
+### Weights license: NOASSERTION (verified 2026-09-14, primary sources)
+
+No party in the chain grants an explicit license for the checkpoint
+itself. Evidence, checked in this order:
+
+1. **The HF model repo's own metadata** (the authoritative record for
+   *this specific artifact*):
+   `curl https://huggingface.co/api/models/erl-j/ddsp-guitar-unified` ->
+   `"cardData": {"license": "unknown"}`, `"tags": ["license:unknown", ...]`.
+   The repo's `README.md` is a bare 3-line YAML front-matter stub (`license:
+   unknown`) with no prose, no model card.
+2. **The author's companion code repo**,
+   [github.com/erl-j/ddsp-guitar](https://github.com/erl-j/ddsp-guitar):
+   `gh api repos/erl-j/ddsp-guitar --jq .license` -> `apache-2.0`
+   (confirmed `LICENSE` file present, standard Apache License 2.0 text).
+   This repo is the **official demo code for the paper this checkpoint
+   comes from** -- its own README states it is demo code for
+   [*DDSP-based Neural Waveform Synthesis of Polyphonic Guitar Performance
+   from String-wise MIDI Input*](https://arxiv.org/abs/2309.07658)
+   (Jonason, Wang, Cooper, Juvela, Sturm, Yamagishi; arXiv:2309.07658,
+   2023-09-14; confirmed via arXiv's own citation metadata, real author
+   list -- `erl-j` is Nicolas Jonason, per the GitHub account's linked
+   name), and its `render_midi.py` downloads **this exact file** from
+   **this exact URL** (`https://huggingface.co/erl-j/ddsp-guitar-unified/
+   resolve/main/unified.ckpt`) as "the *unified* model" -- confirming this
+   checkpoint is that paper's official released artifact, not a
+   coincidentally-similarly-named file.
+3. **The gap**: Apache-2.0 in (2) licenses that GitHub repo's *code*. It
+   does not, on its own, constitute a license grant for a large binary
+   artifact hosted in a *separate* HF repo whose own license field says
+   "unknown" rather than inheriting or restating Apache-2.0. Nothing in
+   either repo, the README, or the paper's abstract page states the
+   trained weights are released under the same terms as the code. Per
+   article 3 ("verify upstream licenses via API/file, never via claims")
+   this package does not infer a grant that was not made explicit --
+   despite the strong same-author, same-artifact circumstantial link,
+   `license = "NOASSERTION"` is the honest, verifiable record.
+
+**Consequence**: redistribution, re-hosting, and commercial use/fine-tuning
+of `unified.ckpt` are all unresolved until `erl-j`/Nicolas Jonason confirms
+terms explicitly. This package only downloads the checkpoint at runtime
+into the end user's own cache (never bundles or redistributes it) and
+verifies its integrity, which does not require a redistribution license.
+See README's Scope and "What this project will NEVER bundle" sections for
+the user-facing statement of the same finding.
 
 ### Integrity: pinned, not an exception (2026-09-14)
 

@@ -64,6 +64,14 @@ This package provides an inference-only PyTorch reimplementation for guitar synt
 - Instruments other than guitar (the model and checkpoint are guitar-specific)
 - A TensorFlow code path — this package is a from-scratch PyTorch reimplementation and will not grow a TensorFlow dependency
 
+**Weights license consequence:** the pretrained checkpoint's license is
+verified `NOASSERTION` (see [What this project will NEVER bundle](#what-this-project-will-never-bundle)
+below) — no party in its provenance chain grants an explicit license for
+the trained weights. This package only downloads the checkpoint at
+runtime into your own local cache; it never redistributes or bundles it.
+**Redistributing, re-hosting, or commercially fine-tuning the checkpoint
+itself is not cleared** until the upstream author confirms terms.
+
 ## Install
 
 ```bash
@@ -172,15 +180,26 @@ above for how to point at a local file instead and skip the download
 entirely, e.g. in CI or offline).
 
 The checkpoint (`erl-j/ddsp-guitar-unified` on Hugging Face) is hosted under
-a **third-party personal account**, not an openmirlab repo. Its Hugging
-Face license field is currently **unspecified ("unknown")** and it has no
-model card. Its sha256 (`f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7`,
+a **third-party personal account**, not an openmirlab repo. Its sha256
+(`f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7`,
 359,321,113 bytes) is pinned and verified on every download, and `revision`
 pins the exact commit rather than the mutable `main` branch -- see
 [CLAUDE.md](CLAUDE.md) for how that was cross-verified. Pinning the hash
-resolves the integrity gap only; the personal-account hosting risk and the
-"unknown" weights license below remain open. This package's own code is Apache-2.0 (see [LICENSE](LICENSE))
-and is an original reimplementation, not copied from any DDSP reference
+resolves the integrity gap only; the personal-account hosting risk remains
+open.
+
+**License: verified `NOASSERTION`** (checked 2026-09-14 against primary
+sources — the HF repo's own metadata, the author's companion
+[erl-j/ddsp-guitar](https://github.com/erl-j/ddsp-guitar) code repo, and
+the paper it accompanies, [arXiv:2309.07658](https://arxiv.org/abs/2309.07658);
+full evidence chain in [CLAUDE.md](CLAUDE.md)). The HF model repo's own
+license field states "unknown" with no model card; the author's code repo
+is Apache-2.0 and its own `render_midi.py` downloads this exact checkpoint
+as "the unified model" for that paper, but Apache-2.0 there licenses the
+*code*, not this separately-hosted trained-weights artifact — nothing in
+either repo or the paper extends that grant to the checkpoint itself. This
+package's own code is Apache-2.0 (see [LICENSE](LICENSE)) and is an
+original reimplementation, not copied from any DDSP reference
 implementation — the [Acknowledgments](#acknowledgments) section above
 credits the DDSP research (Engel et al., 2020) for the architectural
 approach only. **The code license does not extend to the weights.** Treat

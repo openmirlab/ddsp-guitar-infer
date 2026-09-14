@@ -25,6 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   determinism tests (same-seed match / different-seed mismatch) are
   unaffected -- they compare within one process/torch build and stay
   digest-exact.
+- **Checkpoint weights license `"unknown"` → verified `NOASSERTION`**:
+  checked primary sources (2026-09-14) -- the HF model repo
+  `erl-j/ddsp-guitar-unified`'s own metadata still states `license:
+  unknown` with no model card; the author's companion code repo
+  `erl-j/ddsp-guitar` (Apache-2.0, confirmed via `gh api`) is the official
+  demo code for the paper this checkpoint is the release artifact of
+  (Jonason et al., arXiv:2309.07658) and its own `render_midi.py`
+  downloads this exact file from this exact HF URL, but that Apache-2.0
+  grant covers the *code* repo, not this separately-hosted checkpoint --
+  nothing anywhere extends it to the trained weights. `license` is now
+  recorded as the verified `NOASSERTION` (not a bare, undocumented
+  "unknown"), with the redistribution/commercial-use consequence stated
+  in README's Scope and "What this project will NEVER bundle" sections
+  and the full evidence chain in CLAUDE.md.
 - **Checkpoint integrity**: `config/checkpoints.toml` previously shipped
   `sha256 = ""` / `integrity = "unavailable"` with no documented reason --
   contradicting the org constitution's article-4 requirement that a missing-

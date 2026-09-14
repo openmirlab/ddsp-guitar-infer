@@ -7,12 +7,27 @@
 # upstream repo (erl-j/ddsp-guitar-unified) has a single commit; `revision`
 # pins that exact commit rather than the mutable `main` branch ref, so this
 # record continues to describe the artifact even if new commits are pushed.
+#
+# license = "NOASSERTION" (verified 2026-09-14, primary sources -- see
+# CLAUDE.md's "Weights license" section for the full evidence chain): the
+# checkpoint's own HF hosting record (erl-j/ddsp-guitar-unified) states
+# `license: unknown` and carries no model card. The author's companion code
+# repo (github.com/erl-j/ddsp-guitar, `gh api repos/erl-j/ddsp-guitar --jq
+# .license` -> apache-2.0) is the official demo code for the paper this
+# checkpoint comes from (Jonason et al., "DDSP-based Neural Waveform
+# Synthesis of Polyphonic Guitar Performance from String-wise MIDI Input",
+# arXiv:2309.07658) and its own render_midi.py downloads this exact file
+# from this exact HF URL as "the unified model" -- strong circumstantial
+# linkage, but Apache-2.0 licenses that GitHub repo's *code*, and the HF
+# model repo (the authoritative record for this specific artifact) states
+# no license of its own for the trained weights. No party in the chain
+# grants an explicit license for the checkpoint itself.
 [default]
 repo = "erl-j/ddsp-guitar-unified"
 filename = "unified.ckpt"
 revision = "e89325d2f09d7b6429e99fdb0040f1c9bc6392f8"
 sha256 = "f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7"
 size_bytes = 359321113
-license = "unknown"
-provenance = "Hugging Face erl-j/ddsp-guitar-unified, a third-party personal account (see README/CLAUDE.md); single-commit repo as of pinning"
+license = "NOASSERTION"
+provenance = "Hugging Face erl-j/ddsp-guitar-unified, a third-party personal account (see README/CLAUDE.md); single-commit repo as of pinning; checkpoint is the official release for arXiv:2309.07658 per the author's own erl-j/ddsp-guitar repo"
 updated_at = "2026-09-14"
