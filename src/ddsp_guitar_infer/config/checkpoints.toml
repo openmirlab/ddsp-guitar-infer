@@ -1,9 +1,18 @@
-# Package-owned runtime checkpoint record. No upstream SHA-256 is published.
+# Package-owned runtime checkpoint record.
+#
+# sha256 was pinned 2026-09-14 by cross-verifying two independent sources of
+# the same Hugging Face-hosted file: the Hub API's own reported LFS object
+# hash (a git-lfs oid, which is a sha256 by spec) and an independent full
+# download hashed locally -- both produced the identical digest below. The
+# upstream repo (erl-j/ddsp-guitar-unified) has a single commit; `revision`
+# pins that exact commit rather than the mutable `main` branch ref, so this
+# record continues to describe the artifact even if new commits are pushed.
 [default]
 repo = "erl-j/ddsp-guitar-unified"
 filename = "unified.ckpt"
-revision = "main"
-sha256 = ""
-integrity = "unavailable"
-provenance = "Hugging Face erl-j/ddsp-guitar-unified"
-updated_at = "2026-07-21"
+revision = "e89325d2f09d7b6429e99fdb0040f1c9bc6392f8"
+sha256 = "f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7"
+size_bytes = 359321113
+license = "unknown"
+provenance = "Hugging Face erl-j/ddsp-guitar-unified, a third-party personal account (see README/CLAUDE.md); single-commit repo as of pinning"
+updated_at = "2026-09-14"

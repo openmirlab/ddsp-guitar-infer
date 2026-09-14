@@ -36,7 +36,42 @@ without checking with the upstream author first.
 Follow-up before wider distribution of the weights: either (a) get
 explicit licensing terms from `erl-j`, or (b) mirror the checkpoint under
 an openmirlab-controlled HF repo with an explicit license attached, and
-point `DEFAULT_REPO` in `utils/checkpoints.py` at that mirror.
+point `DEFAULT_REPO` in `utils/checkpoints.py` at that mirror. This is
+still open (tracked org-wide in `openmirlab-dev/weights.md`'s "queued"
+row for this package) -- pinning the sha256 below does not resolve the
+personal-account hosting risk, only the integrity gap.
+
+### Integrity: pinned, not an exception (2026-09-14)
+
+`config/checkpoints.toml` records a real `sha256`/`size_bytes`/`revision`
+for `unified.ckpt`, not the article-4 "unavailable" marker. This was a
+deliberate pin, not the default: `erl-j/ddsp-guitar-unified` turned out to
+be a genuinely stable, single-commit HF repo (created and last modified
+2023-12-23, one branch, one target commit). Two independent measurements
+of the file agreed exactly -- the Hub API's own reported git-lfs object
+hash (`.../api/models/erl-j/ddsp-guitar-unified/paths-info/main`) and an
+independently downloaded copy hashed locally with `sha256sum` -- both
+`f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7`
+(359,321,113 bytes). `revision` pins that exact 40-hex commit sha rather
+than the mutable `main` branch ref, so the record keeps describing this
+artifact even if the author pushes new commits later.
+
+`utils/checkpoints.resolve_checkpoint` verifies this hash after every
+hub-resolved download (`allow_download=True`, the path `load()`/
+`GuitarSynthesizer.from_checkpoint` use) and raises `RuntimeError` naming
+the expected/actual digests on mismatch. Two paths deliberately skip
+verification, matching adtof-infer's precedent: an explicit `checkpoint=`
+argument or `DDSP_GUITAR_WEIGHTS` override is assumed to be an
+intentional, known-good file (a test fixture or a caller's own build) and
+is never hashed; and `GuitarSynthSession.cache_info()`'s read-only
+`allow_download=False` check must never hash a ~360 MB file just to
+report cache status.
+
+If a future revision bump ever needs re-pinning: re-run the same
+cross-check (Hub API `paths-info` vs. a fresh independent download) before
+trusting a new hash -- a single HF-hosted measurement alone is one source,
+not two, since the API and the download both ultimately come from the
+same host.
 
 ## Determinism (load-bearing -- read before writing golden-output tests)
 

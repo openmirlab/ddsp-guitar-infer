@@ -77,9 +77,24 @@ pip install .
 - **Python**: 3.10+
 - **Core**: torch, torchaudio, numpy, scipy, soundfile, pretty_midi
 - **Checkpoint**: Auto-downloaded from Hugging Face on first run (~360 MB,
-  cached by `huggingface_hub`). To skip the download (e.g. in CI or
-  offline), set `DDSP_GUITAR_WEIGHTS=/path/to/unified.ckpt` or pass
-  `--checkpoint`/`checkpoint=` explicitly.
+  cached by `huggingface_hub`) and sha256-verified against
+  `config/checkpoints.toml` on every hub-resolved load. To skip the
+  download (e.g. in CI or offline), set
+  `DDSP_GUITAR_WEIGHTS=/path/to/unified.ckpt` or pass
+  `--checkpoint`/`checkpoint=` explicitly -- an explicitly supplied file is
+  assumed intentional and is not hashed. The cache directory is
+  configurable via `cache_dir=`/`GuitarSynthSession(cache_dir=...)`
+  (default: `huggingface_hub`'s own cache, normally `~/.cache/huggingface/`).
+
+  For manual/offline placement, download the exact pinned revision and
+  verify it yourself before pointing `DDSP_GUITAR_WEIGHTS` at it:
+
+  ```bash
+  curl -L -o unified.ckpt \
+    "https://huggingface.co/erl-j/ddsp-guitar-unified/resolve/e89325d2f09d7b6429e99fdb0040f1c9bc6392f8/unified.ckpt"
+  sha256sum unified.ckpt
+  # expect: f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7  (359,321,113 bytes)
+  ```
 
 ### Determinism
 
@@ -159,7 +174,12 @@ entirely, e.g. in CI or offline).
 The checkpoint (`erl-j/ddsp-guitar-unified` on Hugging Face) is hosted under
 a **third-party personal account**, not an openmirlab repo. Its Hugging
 Face license field is currently **unspecified ("unknown")** and it has no
-model card. This package's own code is Apache-2.0 (see [LICENSE](LICENSE))
+model card. Its sha256 (`f90db7735df5be6be389a626d568d2a9928759ebfa192a516ccefee928b4ded7`,
+359,321,113 bytes) is pinned and verified on every download, and `revision`
+pins the exact commit rather than the mutable `main` branch -- see
+[CLAUDE.md](CLAUDE.md) for how that was cross-verified. Pinning the hash
+resolves the integrity gap only; the personal-account hosting risk and the
+"unknown" weights license below remain open. This package's own code is Apache-2.0 (see [LICENSE](LICENSE))
 and is an original reimplementation, not copied from any DDSP reference
 implementation — the [Acknowledgments](#acknowledgments) section above
 credits the DDSP research (Engel et al., 2020) for the architectural

@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Checkpoint integrity**: `config/checkpoints.toml` previously shipped
+  `sha256 = ""` / `integrity = "unavailable"` with no documented reason --
+  contradicting the org constitution's article-4 requirement that a missing-
+  integrity exception be named and justified in README/CLAUDE.md, and
+  overstating the org dashboard's "Cache ✓" entry for this package. The
+  upstream Hugging Face repo (`erl-j/ddsp-guitar-unified`) turned out to be
+  a genuinely stable, single-commit repo (created and last modified
+  2023-12-23), so this is a **real pin, not a documented exception**:
+  `revision` now pins the exact 40-hex commit sha instead of the mutable
+  `main` branch ref, and `sha256`/`size_bytes` are recorded from two
+  independent measurements of the same file that agreed exactly -- the Hub
+  API's own reported LFS object hash and an independently downloaded copy
+  hashed locally (`f90db77…b4ded7`, 359,321,113 bytes). `utils/checkpoints.py`
+  now verifies this hash after every hub-resolved download (`allow_download=True`,
+  i.e. the real `load()` path); an explicit `path=`/`DDSP_GUITAR_WEIGHTS`
+  override and `cache_info()`'s read-only `allow_download=False` check both
+  skip verification (the former is an intentional caller override, matching
+  adtof-infer's precedent; the latter must never hash a ~360 MB file just to
+  report cache status). A mismatch raises `RuntimeError` naming the
+  expected/actual digests.
+
 ### Added
 - `GuitarSynthSession`: an additive lifecycle API around `load_synth`, with
   idempotent loading, explicit release/terminal close, context-manager use,
