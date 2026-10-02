@@ -92,7 +92,20 @@ pip install .
   `--checkpoint`/`checkpoint=` explicitly -- an explicitly supplied file is
   assumed intentional and is not hashed. The cache directory is
   configurable via `cache_dir=`/`GuitarSynthSession(cache_dir=...)`
-  (default: `huggingface_hub`'s own cache, normally `~/.cache/huggingface/`).
+  (default for the packaged Hub model: `huggingface_hub`'s cache, normally
+  `~/.cache/huggingface/`).
+
+  To use another manifest, pass `config_path="/path/to/checkpoints.toml"` to
+  `load_synth()` or `GuitarSynthSession()`. Its `[default]` table can name a
+  pinned Hub `repo`/`filename`/`revision`/`sha256`, or a direct HTTP(S)
+  `url`/`filename`/`sha256`. For one-off changes, pass
+  `checkpoint_overrides={"url": "https://models.example/custom.ckpt",
+  "filename": "custom.ckpt", "sha256": "<64 lowercase hex digits>"}`. These
+  options also apply to `GuitarSynthesizer.from_checkpoint()` and the
+  session's `cache_info()`. Direct-URL files are verified before being placed
+  in `cache_dir/<sha256>/<filename>` (or the XDG cache if `cache_dir` is
+  omitted); `cache_info()` checks that location without downloading or
+  hashing. An explicit `checkpoint=` path still takes priority.
 
   For manual/offline placement, download the exact pinned revision and
   verify it yourself before pointing `DDSP_GUITAR_WEIGHTS` at it:

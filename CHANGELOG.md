@@ -63,6 +63,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   expected/actual digests.
 
 ### Added
+- Caller-selected checkpoint manifests and metadata overrides, including
+  verified HTTP(S) URL downloads and matching offline cache inspection.
 - `GuitarSynthSession`: an additive lifecycle API around `load_synth`, with
   idempotent loading, explicit release/terminal close, context-manager use,
   ready-only MIDI rendering, and download-free checkpoint cache inspection.

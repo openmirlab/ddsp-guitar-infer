@@ -1,8 +1,6 @@
 """Offline lifecycle contract tests for GuitarSynthSession."""
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 import torch
 
@@ -179,6 +177,39 @@ def test_session_load_and_cache_info_share_resolver_with_opposite_download_polic
         ("weights.ckpt", "cache", True),
         ("weights.ckpt", "cache", False),
     ]
+
+
+def test_session_forwards_custom_manifest_to_load_and_cache_info(monkeypatch, tmp_path):
+    calls = []
+    options = {"config_path": str(tmp_path / "custom.toml"),
+               "checkpoint_overrides": {"repo": "custom/repo"}}
+    monkeypatch.setattr(
+        api, "load_synth",
+        lambda checkpoint, device, cache_dir, **kwargs: calls.append(("load", kwargs)) or SynthDouble(1),
+    )
+    monkeypatch.setattr(
+        api, "resolve_checkpoint",
+        lambda checkpoint, cache_dir, **kwargs: calls.append(("cache", kwargs)) or tmp_path / "custom.ckpt",
+    )
+    session = GuitarSynthSession(cache_dir=str(tmp_path), **options).load()
+    assert session.cache_info()["cached"] is True
+    assert calls == [
+        ("load", options),
+        ("cache", {**options, "allow_download": False}),
+    ]
+
+
+def test_one_shot_forwards_manifest_and_metadata_to_resolver(monkeypatch, tmp_path):
+    seen = {}
+    monkeypatch.setattr(api, "resolve_checkpoint", lambda *args, **kwargs: seen.update(kwargs) or tmp_path / "custom.ckpt")
+    monkeypatch.setattr(api, "GuitarControlModel", ModelDouble)
+    monkeypatch.setattr(api.torch, "load", lambda *args, **kwargs: _checkpoint_payload())
+    api.load_synth(
+        device="cpu", config_path=str(tmp_path / "custom.toml"),
+        checkpoint_overrides={"repo": "custom/repo"},
+    )
+    assert seen == {"config_path": str(tmp_path / "custom.toml"),
+                    "checkpoint_overrides": {"repo": "custom/repo"}}
 
 
 def test_resolver_local_only_flag_is_forwarded(monkeypatch, tmp_path):
