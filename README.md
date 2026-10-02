@@ -157,7 +157,8 @@ synth.save_wav(audio, "song.wav")
 ```
 
 For an explicit model lifecycle, use `GuitarSynthSession`.  `load()` is
-idempotent; `release()` frees the resident model but retains downloaded
+idempotent; a failed or interrupted load reports `status == "failed"` and can
+be retried; `release()` frees the resident model but retains downloaded
 weights; and `close()` is terminal. `infer()` and `render_midi()` require a
 loaded session.
 

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Report failed or interrupted `GuitarSynthSession.load()` attempts as
+  `failed`, clear partial session state, and permit a later retry.
 - **`test_render_regression_fixture` torch-version drift**: this test's
   golden was an exact sha256 digest recorded on torch 2.9.1; it failed
   unconditionally on torch 2.13.0 (this repo's own floor and phonon's
