@@ -1,0 +1,17 @@
+ddsp-guitar-infer
+
+This package adapts source from Nicolas Jonason and collaborators' DDSP
+Guitar demo code: https://github.com/erl-j/ddsp-guitar (Apache-2.0).
+The GlotNet/WaveNet files under
+src/ddsp_guitar_infer/ddsp_guitar_utils/glotnet_wavenet/ are retained
+byte-for-byte from that source; its activations.py carries
+"Copyright 2022 Lauri Juvela" and an Apache-2.0 notice. Other synthesis,
+network, and preprocessing modules are adapted from the same project.
+OpenMIRLab's inference packaging and changes are maintained by Paul.
+
+Google Magenta's DDSP research (Engel et al., 2020) is a separate
+architectural predecessor credited in the README.
+
+The external unified.ckpt model is not distributed with this package.
+Its license remains NOASSERTION; the code license and this NOTICE do not
+grant terms for that separately hosted checkpoint.

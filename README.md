@@ -17,8 +17,8 @@ audio. The original `magenta/ddsp` library is TensorFlow-based and is a
 general-purpose research toolkit, not a guitar-specific, install-and-run
 inference package.
 
-ddsp-guitar-infer is a from-scratch PyTorch reimplementation targeted
-specifically at MIDI-to-audio string-wise guitar synthesis: it renders a
+ddsp-guitar-infer packages and adapts the official [DDSP Guitar demo
+code](https://github.com/erl-j/ddsp-guitar) for inference. It renders a
 MIDI guitar performance to audio, one string (voice) at a time, using a
 control RNN plus additive harmonic + filtered-noise DDSP synthesis, with a
 self-contained inference pipeline (no TensorFlow dependency) and an
@@ -26,18 +26,32 @@ auto-downloaded pretrained checkpoint.
 
 ## Acknowledgments
 
-This package builds upon the DDSP framework by Google Magenta:
+The guitar model and demo code come from [Nicolas Jonason and
+collaborators](https://github.com/erl-j/ddsp-guitar), whose [guitar synthesis
+paper](https://arxiv.org/abs/2309.07658) credits Nicolas Jonason, Xin Wang,
+Erica Cooper, Lauri Juvela, Bob L. T. Sturm, and Junichi Yamagishi. The
+GlotNet/WaveNet helpers include Lauri Juvela's Apache-2.0-licensed code.
+This package retains exact upstream files and adapts others; [NOTICE](NOTICE)
+identifies the source relationship.
 
-- **Upstream org**: [Google Magenta](https://github.com/magenta)
-- **Authors**: Jesse Engel, Lamtharn Hantrakul, Chenjie Gu, and Adam Roberts
-- **Source project**: [magenta/ddsp](https://github.com/magenta/ddsp) — the foundational DDSP architecture and synthesis approach
-- **Weights host**: pretrained checkpoint (`unified.ckpt`) hosted on Hugging Face Hub at [erl-j/ddsp-guitar-unified](https://huggingface.co/erl-j/ddsp-guitar-unified), a third-party personal account unaffiliated with Google Magenta or openmirlab (see [What this project will NEVER bundle](#what-this-project-will-never-bundle))
-
-This package provides an inference-only PyTorch reimplementation for guitar synthesis. All credit for the core DDSP research belongs to the original authors.
+[Google Magenta's DDSP](https://github.com/magenta/ddsp) by Jesse Engel,
+Lamtharn Hantrakul, Chenjie Gu, and Adam Roberts is the foundational
+architecture acknowledged by the guitar authors. The pretrained
+`unified.ckpt` is hosted under the guitar author's
+[Hugging Face account](https://huggingface.co/erl-j/ddsp-guitar-unified),
+separate from both Magenta and OpenMIRLab.
 
 ## Citation
 
 ```bibtex
+@misc{jonason2023ddspguitar,
+  title={DDSP-based Neural Waveform Synthesis of Polyphonic Guitar Performance from String-wise MIDI Input},
+  author={Jonason, Nicolas and Wang, Xin and Cooper, Erica and Juvela, Lauri and Sturm, Bob L. T. and Yamagishi, Junichi},
+  year={2023},
+  eprint={2309.07658},
+  archivePrefix={arXiv}
+}
+
 @inproceedings{engel2020ddsp,
   title={DDSP: Differentiable Digital Signal Processing},
   author={Engel, Jesse and Hantrakul, Lamtharn and Gu, Chenjie and Roberts, Adam},
@@ -62,7 +76,7 @@ This package provides an inference-only PyTorch reimplementation for guitar synt
 **Out of scope, forever:**
 - Training or fine-tuning the model — this is an inference-only wrapper
 - Instruments other than guitar (the model and checkpoint are guitar-specific)
-- A TensorFlow code path — this package is a from-scratch PyTorch reimplementation and will not grow a TensorFlow dependency
+- A TensorFlow code path — the packaged guitar inference code is PyTorch-based and does not require TensorFlow
 
 **Weights license consequence:** the pretrained checkpoint's license is
 verified `NOASSERTION` (see [What this project will NEVER bundle](#what-this-project-will-never-bundle)
@@ -212,11 +226,10 @@ is Apache-2.0 and its own `render_midi.py` downloads this exact checkpoint
 as "the unified model" for that paper, but Apache-2.0 there licenses the
 *code*, not this separately-hosted trained-weights artifact — nothing in
 either repo or the paper extends that grant to the checkpoint itself. This
-package's own code is Apache-2.0 (see [LICENSE](LICENSE)) and is an
-original reimplementation, not copied from any DDSP reference
-implementation — the [Acknowledgments](#acknowledgments) section above
-credits the DDSP research (Engel et al., 2020) for the architectural
-approach only. **The code license does not extend to the weights.** Treat
+package's code, including retained and adapted upstream files, is Apache-2.0
+(see [LICENSE](LICENSE) and [NOTICE](NOTICE)). The [Acknowledgments](#acknowledgments)
+separate the guitar source from the earlier Magenta research. **The code
+license does not extend to the weights.** Treat
 redistribution or commercial fine-tuning of the checkpoint as unresolved
 until upstream licensing is clarified or the checkpoint is mirrored under
 an openmirlab-controlled repo with explicit terms — see

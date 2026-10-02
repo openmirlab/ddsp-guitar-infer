@@ -1,14 +1,19 @@
 [project]
 name = "ddsp-guitar-infer"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Inference-only PyTorch pipeline for DDSP-based guitar synthesis"
 readme = "README.md"
 authors = [
-    { name = "Paul", email = "bernie40916@gmail.com" }
+    { name = "Nicolas Jonason" },
+    { name = "Lauri Juvela" },
+    { name = "Paul" },
+]
+maintainers = [
+    { name = "OpenMIRLab", email = "bernie40916@gmail.com" },
 ]
 requires-python = ">=3.10"
 license = "Apache-2.0"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "NOTICE"]
 dependencies = [
     "torch>=2.13.0",
     "torchaudio>=2.11.0",
@@ -39,6 +44,8 @@ dev = [
 Homepage = "https://github.com/openmirlab/ddsp-guitar-infer"
 Repository = "https://github.com/openmirlab/ddsp-guitar-infer"
 Changelog = "https://github.com/openmirlab/ddsp-guitar-infer/blob/main/CHANGELOG.md"
+"Original Code" = "https://github.com/erl-j/ddsp-guitar"
+"Original Research" = "https://arxiv.org/abs/2309.07658"
 
 [project.scripts]
 ddsp-guitar-infer = "ddsp_guitar_infer.cli:main"
@@ -46,6 +53,9 @@ ddsp-guitar-infer = "ddsp_guitar_infer.cli:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/ddsp_guitar_infer/__about__.py"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

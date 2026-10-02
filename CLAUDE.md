@@ -2,7 +2,8 @@
 
 ## Scope
 
-ddsp-guitar-infer is an inference-only PyTorch reimplementation of a
+ddsp-guitar-infer is an inference-only PyTorch package adapting the
+official `erl-j/ddsp-guitar` source for a
 DDSP-based (Differentiable Digital Signal Processing) string-wise guitar
 synthesizer: it renders a MIDI guitar performance to audio, one guitar
 string (voice) at a time, using a control RNN + additive harmonic synthesis
@@ -23,10 +24,12 @@ The pretrained checkpoint is downloaded from **`erl-j/ddsp-guitar-unified`**
 on Hugging Face Hub (`unified.ckpt`, ~360 MB) -- a **personal, third-party
 account**, not an openmirlab-controlled repo.
 
-This package's own source code is Apache-2.0 (see LICENSE) and is an
-original reimplementation, not copied from any DDSP reference
-implementation -- the README's Acknowledgments section credits the
-DDSP research (Engel et al., 2020) for the architectural approach only.
+This package's code is Apache-2.0 (see LICENSE and NOTICE). Six
+GlotNet/WaveNet files are byte-identical to the guitar author's source;
+several other modules are adapted. The dated
+`docs/findings/2026-10-03-source-attribution.md` records the comparison.
+The README credits the guitar source separately from Magenta's earlier
+DDSP research (Engel et al., 2020).
 **The code license does not extend to the weights.** Do not assume the
 checkpoint is safe to redistribute, fine-tune commercially, or bundle
 without checking with the upstream author first.
