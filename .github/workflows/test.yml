@@ -67,8 +67,11 @@ jobs:
         run: |
           /tmp/smoke-venv/bin/python -c "
           import ddsp_guitar_infer
+          from importlib import metadata
           from ddsp_guitar_infer import GuitarSynthesizer, load_synth
-          assert ddsp_guitar_infer.__version__
+          distribution = metadata.distribution('ddsp-guitar-infer')
+          assert ddsp_guitar_infer.__version__ == distribution.version
+          assert any(path.name == 'NOTICE' for path in distribution.files)
           assert GuitarSynthesizer and load_synth
           print('OK:', ddsp_guitar_infer.__version__)
           "

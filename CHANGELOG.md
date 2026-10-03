@@ -79,6 +79,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of packaging bug that `hatch build` alone can miss.
 
 ### Changed
+- Source the installed and checkout version from `__about__.py`; credit the
+  DDSP Guitar source authors in package metadata and NOTICE, with OpenMIRLab
+  as maintainer. Correct the README's earlier from-scratch attribution claim.
 - `pyproject.toml` dependency floors bumped after per-version local
   verification (Python 3.10/3.11/3.12/3.13, `pytest -q`: 3 passed / 3 skipped
   on every version):
