@@ -3,8 +3,8 @@
 Wraps GuitarControlModel with device/dtype setup, MIDI-to-audio rendering
 in overlapping windows (skip_ratio) with cross-fade blending, and chunked
 waveform rendering to bound memory. Resolves the checkpoint via
-resolve_checkpoint (local path, DDSP_GUITAR_WEIGHTS env var, or a
-Hugging Face download).
+resolve_checkpoint (local path, DDSP_GUITAR_WEIGHTS env var, pinned
+Hugging Face download, or caller-configured URL).
 
 Reads: model.GuitarControlModel · utils.midi · utils.checkpoints.resolve_checkpoint ·
 utils.preprocessing.preprocess_model_inputs · ddsp_guitar_utils.dsp.convert_dtype
@@ -62,8 +62,16 @@ class GuitarSynthesizer:
         checkpoint: Optional[str] = None,
         device: Optional[str] = None,
         cache_dir: Optional[str] = None,
+        *,
+        config_path: Optional[str] = None,
+        checkpoint_overrides: Optional[dict] = None,
     ) -> "GuitarSynthesizer":
-        ckpt_path = resolve_checkpoint(checkpoint, cache_dir)
+        options = {}
+        if config_path is not None:
+            options["config_path"] = config_path
+        if checkpoint_overrides is not None:
+            options["checkpoint_overrides"] = checkpoint_overrides
+        ckpt_path = resolve_checkpoint(checkpoint, cache_dir, **options)
         raw = torch.load(ckpt_path, map_location="cpu")
         config = raw["hyper_parameters"]["config"]
         model = GuitarControlModel(config)
@@ -206,8 +214,14 @@ def load_synth(
     checkpoint: Optional[str] = None,
     device: Optional[str] = None,
     cache_dir: Optional[str] = None,
+    *,
+    config_path: Optional[str] = None,
+    checkpoint_overrides: Optional[dict] = None,
 ) -> GuitarSynthesizer:
-    return GuitarSynthesizer.from_checkpoint(checkpoint, device, cache_dir)
+    return GuitarSynthesizer.from_checkpoint(
+        checkpoint, device, cache_dir,
+        config_path=config_path, checkpoint_overrides=checkpoint_overrides,
+    )
 
 
 class GuitarSynthSession:
@@ -223,10 +237,15 @@ class GuitarSynthSession:
         checkpoint: Optional[str] = None,
         device: Optional[str] = None,
         cache_dir: Optional[str] = None,
+        *,
+        config_path: Optional[str] = None,
+        checkpoint_overrides: Optional[dict] = None,
     ) -> None:
         self.checkpoint = checkpoint
         self.device = device
         self.cache_dir = cache_dir
+        self.config_path = config_path
+        self.checkpoint_overrides = dict(checkpoint_overrides) if checkpoint_overrides is not None else None
         self._synth: Optional[GuitarSynthesizer] = None
         self._closed = False
         self._released = False
@@ -249,7 +268,7 @@ class GuitarSynthSession:
             raise RuntimeError("GuitarSynthSession is closed")
         if self._synth is None:
             try:
-                self._synth = load_synth(self.checkpoint, self.device, self.cache_dir)
+                self._synth = load_synth(self.checkpoint, self.device, self.cache_dir, **self._checkpoint_options())
             except BaseException:
                 self._synth = None
                 self._failed = True
@@ -258,6 +277,14 @@ class GuitarSynthSession:
             self._failed = False
             self._released = False
         return self
+
+    def _checkpoint_options(self) -> dict:
+        options = {}
+        if self.config_path is not None:
+            options["config_path"] = self.config_path
+        if self.checkpoint_overrides is not None:
+            options["checkpoint_overrides"] = self.checkpoint_overrides
+        return options
 
     def _ready_synth(self) -> GuitarSynthesizer:
         if self._closed:
@@ -292,7 +319,8 @@ class GuitarSynthSession:
         """Describe the configured checkpoint cache without downloading it."""
         try:
             resolved = resolve_checkpoint(
-                self.checkpoint, self.cache_dir, allow_download=False
+                self.checkpoint, self.cache_dir, allow_download=False,
+                **self._checkpoint_options(),
             )
         except Exception as error:  # cache misses differ across hub versions
             return {"checkpoint": None, "cached": False, "error": str(error)}

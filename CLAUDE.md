@@ -112,6 +112,14 @@ is never hashed; and `GuitarSynthSession.cache_info()`'s read-only
 `allow_download=False` check must never hash a ~360 MB file just to
 report cache status.
 
+Hosts can supply `config_path` or `checkpoint_overrides` through the one-shot
+API and `GuitarSynthSession`. A direct HTTP(S) `url` override requires a
+lowercase SHA-256, is downloaded into a digest-keyed cache via an atomic
+replacement after verification, and is inspected without network or hashing
+by `cache_info()`. The packaged default remains the pinned Hugging Face
+resolver. These override seams do not create an org-hosted mirror or change
+the checkpoint license assertion.
+
 If a future revision bump ever needs re-pinning: re-run the same
 cross-check (Hub API `paths-info` vs. a fresh independent download) before
 trusting a new hash -- a single HF-hosted measurement alone is one source,
