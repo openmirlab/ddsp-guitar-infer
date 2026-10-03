@@ -53,6 +53,40 @@ def test_release_then_load_reconstructs(monkeypatch):
     assert len(created) == 2
 
 
+def test_failed_load_is_visible_and_retryable(monkeypatch):
+    calls = []
+
+    def load(*args):
+        calls.append(args)
+        if len(calls) == 1:
+            raise RuntimeError("bad checkpoint")
+        return SynthDouble("recovered")
+
+    monkeypatch.setattr("ddsp_guitar_infer.api.load_synth", load)
+    session = GuitarSynthSession()
+    with pytest.raises(RuntimeError, match="bad checkpoint"):
+        session.load()
+    assert session.status == "failed"
+    with pytest.raises(RuntimeError, match="not loaded"):
+        session.infer("song.mid")
+    assert session.load() is session
+    assert session.status == "ready"
+    assert session.infer("song.mid")[0] == "recovered"
+    assert len(calls) == 2
+
+
+def test_interrupted_load_is_visible_without_swallowing_interrupt(monkeypatch):
+    def interrupted(*args):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr("ddsp_guitar_infer.api.load_synth", interrupted)
+    session = GuitarSynthSession()
+    with pytest.raises(KeyboardInterrupt):
+        session.load()
+    assert session.status == "failed"
+    assert session._synth is None
+
+
 def test_close_is_terminal_and_idempotent(monkeypatch):
     monkeypatch.setattr("ddsp_guitar_infer.api.load_synth", lambda *args: SynthDouble(1))
     session = GuitarSynthSession().load()

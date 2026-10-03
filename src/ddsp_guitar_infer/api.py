@@ -230,14 +230,17 @@ class GuitarSynthSession:
         self._synth: Optional[GuitarSynthesizer] = None
         self._closed = False
         self._released = False
+        self._failed = False
 
     @property
     def status(self) -> str:
-        """Return ``unloaded``, ``ready``, ``released``, or ``closed``."""
+        """Return ``unloaded``, ``ready``, ``failed``, ``released``, or ``closed``."""
         if self._closed:
             return "closed"
         if self._synth is not None:
             return "ready"
+        if self._failed:
+            return "failed"
         return "released" if self._released else "unloaded"
 
     def load(self) -> "GuitarSynthSession":
@@ -245,7 +248,14 @@ class GuitarSynthSession:
         if self._closed:
             raise RuntimeError("GuitarSynthSession is closed")
         if self._synth is None:
-            self._synth = load_synth(self.checkpoint, self.device, self.cache_dir)
+            try:
+                self._synth = load_synth(self.checkpoint, self.device, self.cache_dir)
+            except BaseException:
+                self._synth = None
+                self._failed = True
+                self._released = False
+                raise
+            self._failed = False
             self._released = False
         return self
 
@@ -269,6 +279,7 @@ class GuitarSynthSession:
         if self._closed:
             return
         self._synth = None
+        self._failed = False
         self._released = True
 
     def close(self) -> None:
