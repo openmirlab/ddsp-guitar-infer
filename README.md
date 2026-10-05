@@ -1,5 +1,8 @@
 # ddsp-guitar-infer
 
+> **Current installation:** `pip install "ddsp-guitar-infer @ git+https://github.com/openmirlab/ddsp-guitar-infer.git"`
+> OpenMIRLab no longer publishes new versions to PyPI. Any existing PyPI releases are historical snapshots.
+
 **Inference-only PyTorch toolkit for DDSP-based string-wise guitar synthesis**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

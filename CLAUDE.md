@@ -212,3 +212,7 @@ Reads: <key dependencies>
 Skip thin files (`__init__.py` re-export barrels, tiny primitives). Header
 updates ride the same commit as changes to a file's role or main imports --
 a stale header is a lie the next reader (human or agent) inherits.
+
+## Distribution policy (2026-10-05)
+
+Install the current source from `https://github.com/openmirlab/ddsp-guitar-infer`. GitHub release workflows verify and build distributions but do not upload to PyPI. Existing PyPI versions, where any exist, are historical snapshots. Update installation examples to use Git when changing this package.
