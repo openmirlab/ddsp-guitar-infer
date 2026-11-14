@@ -28,8 +28,9 @@ This package's code is Apache-2.0 (see LICENSE and NOTICE). Six
 GlotNet/WaveNet files are byte-identical to the guitar author's source;
 several other modules are adapted. The dated
 `docs/findings/2026-10-03-source-attribution.md` records the comparison.
-The README credits the guitar source separately from Magenta's earlier
-DDSP research (Engel et al., 2020).
+The README's linked Acknowledgments credit the guitar authors and source,
+Magenta's earlier DDSP research (Engel et al., 2020), and the weight host
+separately.
 **The code license does not extend to the weights.** Do not assume the
 checkpoint is safe to redistribute, fine-tune commercially, or bundle
 without checking with the upstream author first.

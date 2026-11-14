@@ -29,20 +29,19 @@ auto-downloaded pretrained checkpoint.
 
 ## Acknowledgments
 
-The guitar model and demo code come from [Nicolas Jonason and
-collaborators](https://github.com/erl-j/ddsp-guitar), whose [guitar synthesis
-paper](https://arxiv.org/abs/2309.07658) credits Nicolas Jonason, Xin Wang,
-Erica Cooper, Lauri Juvela, Bob L. T. Sturm, and Junichi Yamagishi. The
-GlotNet/WaveNet helpers include Lauri Juvela's Apache-2.0-licensed code.
-This package retains exact upstream files and adapts others; [NOTICE](NOTICE)
-identifies the source relationship.
-
-[Google Magenta's DDSP](https://github.com/magenta/ddsp) by Jesse Engel,
-Lamtharn Hantrakul, Chenjie Gu, and Adam Roberts is the foundational
-architecture acknowledged by the guitar authors. The pretrained
-`unified.ckpt` is hosted under the guitar author's
-[Hugging Face account](https://huggingface.co/erl-j/ddsp-guitar-unified),
-separate from both Magenta and OpenMIRLab.
+- **Guitar model and authors:** [Nicolas Jonason, Xin Wang, Erica Cooper,
+  Lauri Juvela, Bob L. T. Sturm, and Junichi Yamagishi](https://arxiv.org/abs/2309.07658)
+  developed the guitar synthesis research behind this package.
+- **Source project:** [Nicolas Jonason's DDSP Guitar demo](https://github.com/erl-j/ddsp-guitar)
+  provides the model and demo code. The GlotNet/WaveNet helpers include
+  Lauri Juvela's Apache-2.0-licensed code. This package retains some
+  upstream files and adapts others; [NOTICE](NOTICE) records their provenance.
+- **Foundational architecture:** [Google Magenta's DDSP](https://github.com/magenta/ddsp)
+  was developed by Jesse Engel, Lamtharn Hantrakul, Chenjie Gu, and Adam
+  Roberts.
+- **Weights host:** the pretrained `unified.ckpt` is hosted under the guitar
+  author's [Hugging Face account](https://huggingface.co/erl-j/ddsp-guitar-unified),
+  separate from Magenta and OpenMIRLab.
 
 ## Citation
 

@@ -3,6 +3,8 @@
 ## Unreleased — distribution policy
 
 - Stop publishing new versions to PyPI; GitHub source is the maintained installation channel. GitHub release CI continues to run verification and build checks.
+- Present linked, bulleted upstream authors, source, foundational research,
+  and weight hosting in README Acknowledgments.
 
 All notable changes to this project will be documented in this file.
 
